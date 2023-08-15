@@ -4,6 +4,8 @@ import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.ArrayUtil;
 import cn.xeblog.plugin.tools.read.api.LegadoApi;
 import cn.xeblog.plugin.tools.read.entity.Book;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,15 @@ public class ReadConfig {
     private String[] key = {"Ctrl+↑", "Ctrl+↓", "Shift+↓", "Shift+↑", "Ctrl+1", "Ctrl+2"};
     /** legado阅读web服务的Host */
     private String legadoHost;
+    @Getter
+    @Setter
+    private String session;
+    @Getter
+    @Setter
+    private String user;
+    @Getter
+    @Setter
+    private String pass;
     /** 困难模式一次显示的字符数 */
     private Integer hardColumns = 50;
     /** 自动翻译速度（秒） */
@@ -135,10 +146,7 @@ public class ReadConfig {
     }
 
     public boolean verifyLegadoHost(String host) {
-        if (Validator.isIpv4(host)) {
-            LegadoApi api = new LegadoApi(host);
-            return api.testConnect();
-        }
-        return false;
+        LegadoApi api = new LegadoApi(host);
+        return api.testConnect();
     }
 }

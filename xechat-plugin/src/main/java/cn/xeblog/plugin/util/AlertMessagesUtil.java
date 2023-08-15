@@ -1,11 +1,8 @@
 package cn.xeblog.plugin.util;
 
-import cn.hutool.core.util.ArrayUtil;
+import com.intellij.openapi.ui.MessageUtil;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.messages.AlertMessagesManager;
-
 import javax.swing.*;
-import java.util.Collections;
 
 /**
  * @author LYF
@@ -29,12 +26,10 @@ public class AlertMessagesUtil {
     }
 
     public static boolean showYesNoDialog(String title, String message, String yesText, String noText) {
-        return AlertMessagesManager.instance().showYesNoDialog(title, message, yesText, noText, null,
-                null, Messages.getQuestionIcon(), null);
+        return MessageUtil.showYesNoDialog(title,message,null,yesText,noText,Messages.getQuestionIcon());
     }
 
     public static void showMessageDialog(String title, String message, String[] options, Icon icon) {
-        AlertMessagesManager.instance().showMessageDialog(null, null, message, title,
-                options, 0, -1, icon, null, null);
+        Messages.showDialog(message, title, options, 0, -1, icon, null);
     }
 }

@@ -3,6 +3,7 @@ package cn.xeblog.plugin.tools.read.page;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.xeblog.plugin.cache.DataCache;
 import cn.xeblog.plugin.tools.read.util.KeyFormatUtil;
@@ -42,7 +43,7 @@ public class SettingPage implements IPage {
         configTable = new JBTable() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                if (column == 1 && row > -1 && row < 2) {
+                if (column == 1 && row > -1 && row < 5) {
                     modified = true;
                     return true;
                 }
@@ -64,16 +65,23 @@ public class SettingPage implements IPage {
     private void initConfigTableData() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("名称", new String[]{
-                "Legado Host", "困难模式单行字数",
+                "Legado Host","legaUserName","legaUserPass","session", "困难模式单行字数",
                 "上一页热键", "下一页热键", "老板键", "恢复键",
                 "自动翻页速度(秒)", "自动翻页开始", "自动翻页停止"
         });
-        String[] values = new String[2];
+        String[] values = new String[5];
         values[0] = DataCache.readConfig.getLegadoHost();
-        values[1] = String.valueOf(DataCache.readConfig.getHardColumns());
+        if(ObjectUtil.isEmpty(values[0])){
+            values[0] = "114.55.25.154";
+            DataCache.readConfig.setLegadoHost("114.55.25.154");
+        }
+        values[1] = DataCache.readConfig.getUser();
+        values[2] = DataCache.readConfig.getPass();
+        values[3] = DataCache.readConfig.getSession();
+        values[4] = String.valueOf(DataCache.readConfig.getHardColumns());
         values = ArrayUtil.append(values, DataCache.readConfig.getKey());
         String pageTurningSpeed = String.valueOf(DataCache.readConfig.getPageTurningSpeed());
-        model.addColumn("值", ArrayUtil.insert(values, 6, pageTurningSpeed));
+        model.addColumn("值", ArrayUtil.insert(values, 9, pageTurningSpeed));
         configTable.setModel(model);
     }
 
@@ -88,7 +96,7 @@ public class SettingPage implements IPage {
             @Override
             public void keyPressed(KeyEvent e) {
                 int row = configTable.getSelectedRow();
-                if (row < 2) {
+                if (row < 5) {
                     return;
                 }
                 String key = KeyFormatUtil.format(e);
@@ -160,7 +168,7 @@ public class SettingPage implements IPage {
             }
         }
         try {
-            int hardColumns = NumberUtil.parseInt((String) configTable.getValueAt(1, 1));
+            int hardColumns = NumberUtil.parseInt((String) configTable.getValueAt(4, 1));
             if (hardColumns < 1 || hardColumns > 150) {
                 throw new Exception();
             } else {
@@ -172,12 +180,15 @@ public class SettingPage implements IPage {
             });
             return false;
         }
-        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(2, 1), 0);
-        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(3, 1), 1);
-        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(4, 1), 2);
-        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(5, 1), 3);
+        DataCache.readConfig.setUser((String) configTable.getValueAt(1, 1));
+        DataCache.readConfig.setPass((String) configTable.getValueAt(2, 1));
+        DataCache.readConfig.setSession((String) configTable.getValueAt(3, 1));
+        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(5, 1), 0);
+        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(6, 1), 1);
+        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(7, 1), 2);
+        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(8, 1), 3);
         try {
-            int pageTurningSpeed = NumberUtil.parseInt((String) configTable.getValueAt(6, 1));
+            int pageTurningSpeed = NumberUtil.parseInt((String) configTable.getValueAt(9, 1));
             if (pageTurningSpeed < 1 || pageTurningSpeed > 60) {
                 throw new Exception();
             } else {
@@ -189,8 +200,8 @@ public class SettingPage implements IPage {
             });
             return false;
         }
-        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(7, 1), 4);
-        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(8, 1), 5);
+        DataCache.readConfig.setKeyMap((String) configTable.getValueAt(10, 1), 4);
+
         return true;
     }
 }
